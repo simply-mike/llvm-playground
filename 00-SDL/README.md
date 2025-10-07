@@ -30,8 +30,8 @@ Every cell interacts with its eight neighbors, which are the cells that are hori
 
 ## Requirements
 
-- `SDL2`
-- `clang`
+- `libsdl2-dev`
+- `clang` (17 or higher, recommended: 20+)
 - `make`
 
 ## Installation and Usage
