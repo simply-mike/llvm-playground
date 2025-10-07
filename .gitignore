@@ -13,7 +13,6 @@ __pycache__/
 requirements.txt
 
 trace.log
-results/
 instruction_patterns/
 
 build/

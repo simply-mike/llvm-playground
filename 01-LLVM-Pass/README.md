@@ -62,6 +62,14 @@ python3 analyze_ir_trace.py ./build/game_of_life_instrumented \
 - `analyze_ir_trace.py`: Python script for trace analysis and visualization.
 - `CMakeLists.txt`: Configures selective instrumentation of `app.c` only.
 
+## Sample results:
+
+![Patterns of length 1](results/patterns_len_1.png)
+![Patterns of length 2](results/patterns_len_2.png)
+![Patterns of length 3](results/patterns_len_3.png)
+![Patterns of length 4](results/patterns_len_4.png)
+![Patterns of length 5](results/patterns_len_5.png)
+
 ## License
 
 This project is distributed under the same permissive terms as LLVM and SDL2. The LLVM pass and analysis tools are free to use, modify, and distribute in any software project.
