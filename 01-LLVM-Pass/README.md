@@ -22,7 +22,7 @@ The instrumentation is applied **only to the core logic (`app.c`)**, leaving the
 
 ## Requirements
 
-- `clang` (17 or higher, recommended: 20+)
+- `clang` (20 or higher)
 - `llvm-dev` (matching your Clang version)
 - `libsdl2-dev`
 - `cmake` (3.20 or higher)
