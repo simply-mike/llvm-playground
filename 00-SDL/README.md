@@ -32,6 +32,7 @@ This rule is notable because it is **computationally universal** — capable of 
 
 - `libsdl2-dev`
 - `clang` (17 recommended)
+- `llvm-dev` (17 recommended)
 - `cmake` (3.20 or higher)
 
 ### On Debian/Ubuntu:
@@ -56,10 +57,11 @@ cd build
 cmake ..
 cmake --build .
 ```
-If you have different LLVM version by default and another version is installed separately (like llvm-config-17), last step should be something like:
+
+If you have different LLVM version by default and another version is installed separately (like llvm-17), `cmake ..` step should be something like:
 
 ```bash
-cmake .. -DLLVM_DIR=$(llvm-config-17 --cmakedir)
+cmake .. --DCMAKE_C_COMPILER=clang-17
 ```
 
 ### Step 2: Run the application
@@ -85,9 +87,9 @@ or delete the entire `build/` directory.
 
 ## Architecture
 
-- `start.c` — Application entry point.
-- `GUI-lib.c` / `GUI-lib.h` — Minimal SDL2 wrapper providing `gui_set_pixel`, `gui_flush`, `gui_quit_event`, and `gui_rand`.
-- `app.c` — Core logic:
+- `start.c` - Application entry point.
+- `GUI-lib.c` / `GUI-lib.h` - Minimal SDL2 wrapper providing `gui_set_pixel`, `gui_flush`, `gui_quit_event`, and `gui_rand`.
+- `app.c` - Core logic:
   - Initializes the first row with random live/dead cells.
   - Applies Rule 110 with wrap-around boundaries.
   - Renders each generation as a horizontal line of pixels.

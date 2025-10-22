@@ -38,8 +38,14 @@ The instrumentation is applied **only to the core automaton logic (`one-cycle-ap
 ### Step 2: Build the instrumented executable
 ```bash
 mkdir build && cd build
-cmake .. -DCMAKE_C_COMPILER=clang-17
+cmake ..
 cmake --build .
+```
+
+If you have different LLVM version by default and another version is installed separately (like llvm-17), `cmake ..` step should be something like:
+
+```bash
+cmake .. --DCMAKE_C_COMPILER=clang-17
 ```
 
 ### Step 3: Run the application
@@ -48,11 +54,10 @@ cmake --build .
 ```
 The program will create `runtime.json` in the current directory.
 
-## Project Structure
+## Architecture
 
-- `src/pass.cpp`: LLVM module pass that injects logging calls.
-- `src/logger.c`: Runtime implementation of `optLogger` and `callOptLogger` (writes to `runtime.json`).
-- `CMakeLists.txt`: Coordinates IR instrumentation and linking with SDL2.
+- `src/pass.cpp` - LLVM module pass that injects logging calls.
+- `src/logger.c` - Runtime implementation of `optLogger` and `callOptLogger` (writes to `runtime.json`).
 
 ## Sample Trace Snippet (`runtime.json`)
 
