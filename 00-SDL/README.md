@@ -1,40 +1,38 @@
-# Conway's Game of Life with SDL2
+# One-Dimensional Cellular Automaton with SDL2
 
-This project implements **Conway's Game of Life** using a simple custom graphics interface built on top of **SDL 2.0**. The application visualizes the cellular automaton on a grid, where each cell is represented as a virtual pixel (8x8 real pixels) for better visibility and performance.
+This project visualizes a **one-dimensional cellular automaton** using **Rule 110**, one of the simplest known Turing-complete systems. The simulation runs in real time and is rendered using a minimal custom graphics layer built on top of **SDL 2.0**.
+
+Each row represents a new generation of the automaton, evolving downward from an initial random state. The result is a striking space-time diagram that reveals complex emergent behavior from a simple local rule.
 
 ## Features
 
-- **Virtual Pixels**: Each logical cell is rendered as an 8x8 block of real pixels for clarity.
-- **Real-time Simulation**: Watch the evolution of cellular patterns in real-time.
-- **Simple Interface**: A custom `sim.h` provides a minimal API for graphics, hiding the complexity of SDL.
-- **Pure C**: Uses only C standard types (`int`) and static memory allocation.
-- **No External Dependencies**: Only requires SDL2 and standard C libraries.
+- **Rule 110 Automaton**: Implements the elementary cellular automaton rule 110.
+- **Cyclic Boundary Conditions**: The left and right edges wrap around (toroidal topology).
+- **Real-time Visualization**: Each new generation is drawn immediately below the previous one.
+- **No External Dependencies** beyond SDL2.
 
-## Rules of Conway's Game of Life
+## What is Rule 110?
 
-The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states: alive or dead.
+Rule 110 is an **elementary cellular automaton** defined by the following update rule for each cell based on its current state and the states of its left and right neighbors:
 
-Every cell interacts with its eight neighbors, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
+| Left | Center | Right | -> | New State |
+|------|--------|-------|---|-----------|
+| 1    | 1      | 1     | -> | 0         |
+| 1    | 1      | 0     | -> | 1         |
+| 1    | 0      | 1     | -> | 1         |
+| 1    | 0      | 0     | -> | 0         |
+| 0    | 1      | 1     | -> | 1         |
+| 0    | 1      | 0     | -> | 1         |
+| 0    | 0      | 1     | -> | 1         |
+| 0    | 0      | 0     | -> | 0         |
 
-1. Any live cell with fewer than two live neighbors dies, as if by underpopulation.
-2. Any live cell with two or three live neighbors lives on to the next generation.
-3. Any live cell with more than three live neighbors dies, as if by overpopulation.
-4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
-
-## Notable Patterns
-
-- **Still lifes**: Patterns that do not change. Examples: Block, Beehive, Loaf.
-- **Oscillators**: Patterns that return to their initial state after a finite number of generations. Example: Blinker, Toad.
-- **Spaceships**: Patterns that move across the grid. Example: Glider, Lightweight Spaceship.
-- **Guns**: Patterns that periodically emit spaceships. Example: Gosper Glider Gun.
+This rule is notable because it is **computationally universal** — capable of simulating any Turing machine given the right initial conditions.
 
 ## Requirements
 
 - `libsdl2-dev`
-- `clang` (17 or higher, recommended: 20+)
-- `make`
-
-## Installation and Usage
+- `clang` (17 recommended)
+- `cmake` (3.20 or higher)
 
 ### On Debian/Ubuntu:
 
@@ -45,45 +43,73 @@ sudo apt install libsdl2-dev build-essential
 
 ## Building and Running
 
-This project includes a `Makefile` for easy building and running.
+This project uses **CMake** as its build system. Ensure you have CMake, a C compiler (like `clang`), and SDL2 development libraries installed.
 
-### Build the executable:
+### Step 1: Build the application
 
-```bash
-make
-```
-
-### Run the application:
+It's recommended to build out-of-source:
 
 ```bash
-make run
+cd 00-SDL
+mkdir build
+cd build
+cmake ..
+cmake --build .
 ```
-
-### Clean build artifacts:
+If you have different LLVM version by default and another version is installed separately (like llvm-config-17), last step should be something like:
 
 ```bash
-make clean
+cmake .. -DLLVM_DIR=$(llvm-config-17 --cmakedir)
 ```
+
+### Step 2: Run the application
+
+```bash
+./GUI-app
+```
+
+
+### Optional: Clean
+
+To clean all build artifacts:
+
+```bash
+rm -rf *
+```
+
+or delete the entire `build/` directory.
 
 ## Controls
 
-- Close the window or press `Alt+F4` to exit the application.
+- Close the window or press `Alt+F4` to exit.
 
 ## Architecture
 
-- `start.c`: Entry point of the application.
-- `sim.c` / `sim.h`: Provides a simplified graphics interface using SDL2. Includes functions like `simPutPixel`, `simFlush`, `simDelay`, etc.
-- `app.c`: Contains the logic for Conway's Game of Life, including grid updates and rendering.
+- `start.c` — Application entry point.
+- `GUI-lib.c` / `GUI-lib.h` — Minimal SDL2 wrapper providing `gui_set_pixel`, `gui_flush`, `gui_quit_event`, and `gui_rand`.
+- `app.c` — Core logic:
+  - Initializes the first row with random live/dead cells.
+  - Applies Rule 110 with wrap-around boundaries.
+  - Renders each generation as a horizontal line of pixels.
 
-## How It Works
+## Visualization Details
 
-- The grid is logically smaller (`VIRTUAL_WIDTH x VIRTUAL_HEIGHT`) than the actual screen resolution (`SIM_X_SIZE x SIM_Y_SIZE`).
-- Each logical cell is mapped to an 8x8 square of real pixels for rendering.
-- The simulation updates the grid based on Conway's Game of Life rules every frame.
-- A delay (`simDelay`) controls the simulation speed.
+- The screen is treated as a grid of `GUI_WIDTH × GUI_HEIGHT` logical pixels.
+- Each logical pixel maps 1:1 to a real screen pixel (no scaling).
+- Time flows downward: row 0 = initial state, row 1 = next generation, etc.
+- Once the bottom is reached, the display wraps and overwrites from the top.
+
+## Why Rule 110?
+
+Despite its simplicity, Rule 110 exhibits **complex, chaotic, and structured behavior** simultaneously — a hallmark of systems capable of universal computation. This project offers a live window into that fascinating computational universe.
+
+## References
 
 - [SDL2 Documentation](https://wiki.libsdl.org/SDL2)
+- [Elementary Cellular Automaton — Wikipedia](https://en.wikipedia.org/wiki/Elementary_cellular_automaton)
+- [Rule 110 — Wolfram MathWorld](https://mathworld.wolfram.com/Rule110.html)
 
 ## License
 
-This project is distributed under the same license as SDL2: the zlib license. See [SDL's website](https://www.libsdl.org/) for more details.
+This project is distributed under the **zlib license**, the same as SDL2.  
+See [libsdl.org](https://www.libsdl.org/) for license details.
